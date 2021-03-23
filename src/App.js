@@ -35,18 +35,30 @@ function App() {
                     </Button>
                 </Col>
                 <Col md={4} className="mb-3">
-                    <Button block onClick={handleLeft}>
+                    <Button block onClick={handleLeft} className="btn-warning">
                         Stanga{" "}
                     </Button>
                 </Col>
-                <Col md={4} className="mb-3"></Col>
-                <Col md={4} className="mb-3" onClick={handleRight}>
-                    <Button block>Dreapta</Button>
+                <Col md={4} className="mb-3">
+                    <Button block onClick={handleLeft} className="btn-danger">
+                        Centru{" "}
+                    </Button>
                 </Col>
-                <Col md={12}>
+                <Col md={4} className="mb-3">
+                    <Button block className="btn-warning" onClick={handleRight}>
+                        Dreapta
+                    </Button>
+                </Col>
+                <Col md={12} className="mb-5">
                     <Button block onClick={handleBack}>
                         Jos
                     </Button>
+                </Col>
+                <Col md={6} className="mt-5">
+                    <Button block>Open</Button>
+                </Col>
+                <Col md={6} className="mt-5">
+                    <Button block>Close</Button>
                 </Col>
             </Row>
         </Container>
