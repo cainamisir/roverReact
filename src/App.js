@@ -3,27 +3,54 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import { LineChart, XAxis, Tooltip, CartesianGrid, Line, YAxis, Legend } from "recharts";
 import {useState} from "react";
 const axios = require("axios").default;
-const ip = "http://192.168.43.16:8080";
-
+const ip = "http://178.138.32.130:8080";
 
 function App() {
+    const [data, setData] = useState([]);
     const [unghi , setUnghi] = useState(0);
+    function addResponseToData(response) {
+    let start = response.indexOf("mq8 = ");
+    start += 7;
+    let number = 0;
+    while(response[start] >= '0' && response[start] <= '9')
+    {
+        number = number * 10 + response[start] - '0';
+        start ++;
+    }
+    let mq8 = number;
 
+    // 
+    start = response.indexOf("mq4 = ");
+    start += 7;
+    number = 0;
+    while(response[start] >= '0' && response[start] <= '9')
+    {
+        number = number * 10 + response[start] - '0';
+        start ++;
+    }
+    let mq4 = number;
+    data.push({mq4: mq4, mq8: mq8});
+    setData(data);
+    }
     function handleFront() {
         axios.get(ip + "/move/fata").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
     }
     function handleBack() {
         axios.get(ip + "/move/spate").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
     }
     function handleLeft() {
         axios.get(ip + "/move/stanga").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
         if(unghi >= -1)
         setUnghi(unghi - 1);
@@ -31,6 +58,7 @@ function App() {
     function handleRight() {
         axios.get(ip + "/move/dreapta").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
         if(unghi <= 1)
         setUnghi(unghi + 1);
@@ -38,37 +66,49 @@ function App() {
     function handleCenter() {
         axios.get(ip + "/move/centru").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
         setUnghi(0);
     }
     function handleOpen() {
+        console.log(data);
         axios.get(ip + "/gheara/open").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
     }
     function handleClose() {
         axios.get(ip + "/gheara/close").then(function (response) {
             console.log(response);
+            addResponseToData(response);
         });
     }
     function handleFront_power() {
         axios.get(ip + "/move/fatatesla").then(function (response) {
             console.log(response);
+            addResponseToData(response);
+
         });
     }
     function handleBack_power(){
         axios.get(ip + "/move/spatetesla").then(function(response){
             console.log(response);
+            addResponseToData(response);
+
         });
     }
     function dealFata(){
         axios.get(ip + "/move/dealfata").then(function(response){
             console.log(response);
+            addResponseToData(response);
+
         });
     }
     function dealSpate(){
         axios.get(ip + "/move/dealspate").then(function(response){
             console.log(response);
+            addResponseToData(response);
+
         });
     }
     return (
@@ -135,6 +175,22 @@ function App() {
                     </Button>
                 </Col>
             </Row>
+            <LineChart
+                width={800}
+                height={800}
+                data={data}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                >
+                <CartesianGrid stroke='#f5f5f5' verticalFill={['rgba(0, 0, 0, 0.2)', 'rgba(255, 255, 255, 0.3)']} horizontalFill={['#ccc', '#fff']} />
+            <Legend />
+            <XAxis dataKey="name" axisLine={{ stroke: 'red' }} />
+            <YAxis domain={[1, 'auto']} ticks={[0.01, 0.1, 1, 10, 100, 1000]} />
+            <Tooltip />
+            <Line type='monotone' dataKey='pressure' stroke='#FF0000' />
+
+            <Line type='monotone' dataKey='temperature' stroke='#ff7300' />
+
+            </LineChart>
         </Container>
     );
 }
